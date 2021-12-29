@@ -1,0 +1,7 @@
+/.env
+/datacenter
+/e-diary
+/manage.py
+/project
+/schoolbase.sqlite3
+/__pycache__
