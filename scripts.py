@@ -1,7 +1,6 @@
 from datacenter.models import *
 from commendations import COMMENDATIONS
 import random
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 
 def get_correct_schoolkid(name_schoolkid: str):
@@ -15,11 +14,11 @@ def get_correct_schoolkid(name_schoolkid: str):
     """
     try:
         schoolkid = Schoolkid.objects.get(full_name=name_schoolkid)
-    except ObjectDoesNotExist:
-        print('Schoolkid not found, please check name')
-    except MultipleObjectsReturned:
+        return schoolkid
+    except Schoolkid.DoesNotExist:
+        print('Schoolkid is not found, please check name')
+    except Schoolkid.MultipleObjectsReturned:
         print('More than one Schoolkid found, please check name')
-    return schoolkid
 
 
 def fix_marks(schoolkid_name: str):
@@ -57,15 +56,17 @@ def create_commendation(schoolkid_name: str, subject_name: str):
         subject_name (str): format example 'Музыка'
     """
     schoolkid = get_correct_schoolkid(schoolkid_name)
-    try:
+    if schoolkid is not None:
         last_lesson = Lesson.objects.filter(
             year_of_study=schoolkid.year_of_study,
             group_letter=schoolkid.group_letter,
-            subject__title__contains=subject_name).order_by('-date')[0]
-        Commendation.objects.create(
-            text=random.choice(COMMENDATIONS),
-            created=last_lesson.date,
-            schoolkid=schoolkid,
-            subject=last_lesson.subject, teacher=last_lesson.teacher)
-    except IndexError:
-        print('Check correct subject name')
+            subject__title__contains=subject_name).order_by('-date').first()
+        if last_lesson is not None:
+            Commendation.objects.create(
+                text=random.choice(COMMENDATIONS),
+                created=last_lesson.date,
+                schoolkid=schoolkid,
+                subject=last_lesson.subject,
+                teacher=last_lesson.teacher)
+        else:
+            print('Check correct subject name')
