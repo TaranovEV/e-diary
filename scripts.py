@@ -29,13 +29,16 @@ def fix_marks(schoolkid_name: str):
         schoolkid_name (str): format 'Фамилия Имя Отчество'
     """
     schoolkid = get_correct_schoolkid(schoolkid_name)
-    all_bad_points = Mark.objects.filter(
-        schoolkid=schoolkid,
-        points__lte=3
-        )
-    for bad_point in all_bad_points:
-        bad_point.points = 5
-        bad_point.save()
+    if schoolkid is not None:
+        all_bad_points = Mark.objects.filter(
+            schoolkid=schoolkid,
+            points__lte=3
+            )
+        for bad_point in all_bad_points:
+            bad_point.points = 5
+            bad_point.save()
+    else:
+        print('Schoolkid is None')
 
 
 def remove_chastisements(schoolkid_name: str):
@@ -45,7 +48,10 @@ def remove_chastisements(schoolkid_name: str):
         schoolkid_name (str): format 'Фамилия Имя Отчество'
     """
     schoolkid = get_correct_schoolkid(schoolkid_name)
-    Chastisement.objects.filter(schoolkid=schoolkid).delete()
+    if schoolkid is not None:
+        Chastisement.objects.filter(schoolkid=schoolkid).delete()
+    else:
+        print('Schoolkid is None')
 
 
 def create_commendation(schoolkid_name: str, subject_name: str):
