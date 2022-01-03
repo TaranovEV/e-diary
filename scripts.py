@@ -48,10 +48,9 @@ def remove_chastisements(schoolkid_name: str):
         schoolkid_name (str): format 'Фамилия Имя Отчество'
     """
     schoolkid = get_correct_schoolkid(schoolkid_name)
-    if schoolkid is not None:
-        Chastisement.objects.filter(schoolkid=schoolkid).delete()
-    else:
-        print('Schoolkid is None')
+    if not schoolkid:
+        return 
+    Chastisement.objects.filter(schoolkid=schoolkid).delete()
 
 
 def create_commendation(schoolkid_name: str, subject_name: str):
@@ -62,17 +61,18 @@ def create_commendation(schoolkid_name: str, subject_name: str):
         subject_name (str): format example 'Музыка'
     """
     schoolkid = get_correct_schoolkid(schoolkid_name)
-    if schoolkid is not None:
-        last_lesson = Lesson.objects.filter(
+    if not schoolkid:
+        return
+    last_lesson = Lesson.objects.filter(
             year_of_study=schoolkid.year_of_study,
             group_letter=schoolkid.group_letter,
             subject__title__contains=subject_name).order_by('-date').first()
-        if last_lesson is not None:
-            Commendation.objects.create(
+    if not last_lesson:
+        print('Check correct subject name')
+        return
+    Commendation.objects.create(
                 text=random.choice(COMMENDATIONS),
                 created=last_lesson.date,
                 schoolkid=schoolkid,
                 subject=last_lesson.subject,
-                teacher=last_lesson.teacher)
-        else:
-            print('Check correct subject name')
+                teacher=last_lesson.teacher)          
