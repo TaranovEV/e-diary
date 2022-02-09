@@ -39,6 +39,3 @@
 - если найдено несколько Ф.И.О, появится сообщение:  
 `More than one Schoolkid found, please check name`
 
-## Цели проекта
-
-Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org).
